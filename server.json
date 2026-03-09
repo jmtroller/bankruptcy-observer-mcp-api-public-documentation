@@ -4,6 +4,10 @@
   "title": "Bankruptcy Observer",
   "description": "US business bankruptcy data via MCP: search cases, lookup by EIN, docket items, cases by NAICS or state. Same data as the Bankruptcy Observer REST API.",
   "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/jmtroller/bankruptcy-observer-mcp-api-public-documentation",
+    "source": "github"
+  },
   "remotes": [
     {
       "type": "streamable-http",
