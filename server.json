@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.bankruptcyobserver/mcp",
+  "title": "Bankruptcy Observer",
+  "description": "US business bankruptcy data via MCP: search cases, lookup by EIN, docket items, cases by NAICS or state. Same data as the Bankruptcy Observer REST API.",
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.bankruptcyobserver.com/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "API token (Bearer). Obtain from sign-up at bankruptcyobserver.com.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
