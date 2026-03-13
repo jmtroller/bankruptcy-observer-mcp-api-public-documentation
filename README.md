@@ -15,22 +15,13 @@ Data covers **US business bankruptcies** (federal courts) only. Consumer-only fi
 
 Access requires an account and an API token. Sign-up and subscription plans are on the main product site: [Bankruptcy Observer](https://bankruptcyobserver.com). After sign-up you receive an API token to use with both the REST API and the MCP server.
 
+For questions about access, billing, or data coverage, see the contact page: https://www.bankruptcyobserver.com/contact.
+
 **Send the token in one of these ways:**
 
 - `Authorization: Bearer <your-token>`
 - `X-API-Key: <your-token>`
 - `Api-Key: <your-token>`
-
----
-
-## Test token
-
-You can try the service with the test token **`TEST-TOKEN`** (when enabled in your environment).
-
-- **REST API:** Send the header `Authorization: Bearer TEST-TOKEN` or `X-API-Key: TEST-TOKEN` with POST requests to `https://api.bankruptcyobserver.com/api/v1/...`.
-- **MCP:** Use the same header when connecting to `https://mcp.bankruptcyobserver.com/mcp`.
-
-This token is for integration and smoke tests. If `TEST-TOKEN` is not accepted, it may not be enabled for your deployment or you may need a production token from sign-up.
 
 ---
 
