@@ -21,7 +21,7 @@ AI assistants and users can look up bankruptcy cases with **no account or API ke
 | **7-digit case number** | `get_case_by_case_number_tool` | `short_case_number: "26-12664"` |
 
 - Call these tools **with no API key**. The server returns limited case info (name, case number, court, date filed, chapter, asset/liability ranges, open/closed, date updated) and a message that a **$5 real-time update** is available via `purchase_plan_tool` (plan `single_query`) and `fulfill_single_query_tool`.
-- All other queries (wildcard search, EIN, industry, state, date range, docket, etc.) require a subscription or a $5 one-time payment.
+- All other queries (wildcard search, EIN, industry, state, date range, docket, etc.) require a subscription.
 
 **Docs:** [https://mcp.bankruptcyobserver.com/docs](https://mcp.bankruptcyobserver.com/docs) or [https://api.bankruptcyobserver.com/docs](https://api.bankruptcyobserver.com/docs) (GET, no auth). The MCP root `GET https://mcp.bankruptcyobserver.com/` also returns a `free_lookups` hint.
 
