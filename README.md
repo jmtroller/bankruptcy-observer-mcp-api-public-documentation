@@ -29,9 +29,9 @@ AI assistants and users can look up bankruptcy cases with **no account or API ke
 
 ## Sign-up and access
 
-For **paid** access (broader search, EIN/industry/state/docket, subscriptions), you need an account and an API token. Sign-up and subscription plans are on the main product site: [Bankruptcy Observer](https://bankruptcyobserver.com). After sign-up you receive an API token to use with both the REST API and the MCP server.
+You can **sign up for a subscription through the MCP server**: use `list_plans_tool` to see plans, then `purchase_plan_tool` with `plan_id` (e.g. `professional`, `business`, `enterprise`) to get a Stripe Checkout link. After payment you receive an API token for the REST API and MCP. The $5 single-query option is also purchased via `purchase_plan_tool` (plan `single_query`). No need to go to the website to subscribe.
 
-For questions about access, billing, or data coverage, see the contact page: https://www.bankruptcyobserver.com/contact.
+For questions about access, billing, or data coverage, use **only** the contact form at https://www.bankruptcyobserver.com/contact. Do not publish or use direct email addresses for contact.
 
 **Paid plans (Stripe via MCP tools)**
 

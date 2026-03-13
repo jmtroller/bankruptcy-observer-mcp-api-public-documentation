@@ -15,7 +15,7 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "API token (Bearer). Obtain from sign-up at bankruptcyobserver.com.",
+          "description": "API token (Bearer). Obtain via this server: list_plans_tool then purchase_plan_tool to get Stripe Checkout; after payment you receive a token. Or at bankruptcyobserver.com.",
           "isRequired": true,
           "isSecret": true
         }
