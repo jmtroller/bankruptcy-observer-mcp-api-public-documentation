@@ -11,11 +11,36 @@ Data covers **US business bankruptcies** (federal courts) only. Consumer-only fi
 
 ---
 
+## Free lookups (no API key, no payment)
+
+AI assistants and users can look up bankruptcy cases with **no account or API key**:
+
+| Free query | MCP tool | Example |
+|------------|----------|---------|
+| **Exact debtor name** | `search_bankruptcy_cases_tool` | `search_term: "THE ACTIVE LIFE AC, LLC"` |
+| **7-digit case number** | `get_case_by_case_number_tool` | `short_case_number: "26-12664"` |
+
+- Call these tools **with no API key**. The server returns limited case info (name, case number, court, date filed, chapter, asset/liability ranges, open/closed, date updated) and a message that a **$5 real-time update** is available via `purchase_plan_tool` (plan `single_query`) and `fulfill_single_query_tool`.
+- All other queries (wildcard search, EIN, industry, state, date range, docket, etc.) require a subscription or a $5 one-time payment.
+
+**Docs:** [https://mcp.bankruptcyobserver.com/docs](https://mcp.bankruptcyobserver.com/docs) or [https://api.bankruptcyobserver.com/docs](https://api.bankruptcyobserver.com/docs) (GET, no auth). The MCP root `GET https://mcp.bankruptcyobserver.com/` also returns a `free_lookups` hint.
+
+---
+
 ## Sign-up and access
 
-Access requires an account and an API token. Sign-up and subscription plans are on the main product site: [Bankruptcy Observer](https://bankruptcyobserver.com). After sign-up you receive an API token to use with both the REST API and the MCP server.
+For **paid** access (broader search, EIN/industry/state/docket, subscriptions), you need an account and an API token. Sign-up and subscription plans are on the main product site: [Bankruptcy Observer](https://bankruptcyobserver.com). After sign-up you receive an API token to use with both the REST API and the MCP server.
 
 For questions about access, billing, or data coverage, see the contact page: https://www.bankruptcyobserver.com/contact.
+
+**Paid plans (Stripe via MCP tools)**
+
+- **Single Query** — $5 one-time lookup (no account or subscription).
+- **Professional** — $1,500/month, up to **500** billable tool calls/month.
+- **Business** — $3,500/month, up to **2,000** billable tool calls/month.
+- **Enterprise** — $5,000/month, up to **100,000** billable tool calls/month (intended for multiple clients/teams).
+
+Billable tool calls correspond to data tools invoked via MCP (for example, search, case by EIN, docket items, NAICS/state filters) or their REST API equivalents.
 
 **Send the token in one of these ways:**
 
@@ -45,10 +70,10 @@ The same queries are available on both the REST API and the MCP server. Each que
 
 | # | Query | Inputs | What you get | Notes |
 |---|-------|--------|--------------|--------|
-| 1 | **Search** | `search_term`, `limit`, `skip`, optional `court_id` or `court_state` | List of cases with standard fields | Default: prefix (starts-with) on name. Use `*term` for contains (e.g. `*Hotel`). For case number lookup use Case by case number. |
-| 2 | **Case by EIN** | `ein` | One case (or none) **+** `einInDatabase`: `"Yes"` or `"No"` | Single match; flag says whether we have this EIN. |
-| 3 | **Docket items** | `shortCaseNumber`, optional `court_id` or `court_state`, `limit` | Case identifier, `dateDocketUpdated`, list of entries (itemNumber, itemText, itemDate, …) | Case resolved by short case number + optional court. |
-| 4 | **Case by case number** | `shortCaseNumber`, optional `court_id` or `court_state` | One case with standard fields | Use when same number exists in multiple courts. |
+| 1 | **Search** | `search_term`, `limit`, `skip`, optional `court_id` or `court_state` | List of cases with standard fields | **FREE (no key):** exact name returns limited info + $5 upsell. Otherwise: prefix (starts-with) on name; use `*term` for contains. For case number use Case by case number. |
+| 2 | **Case by EIN** | `ein` | One case (or none) **+** `einInDatabase`: `"Yes"` or `"No"` | Single match; flag says whether we have this EIN. (Paid.) |
+| 3 | **Docket items** | `shortCaseNumber`, optional `court_id` or `court_state`, `limit` | Case identifier, `dateDocketUpdated`, list of entries (itemNumber, itemText, itemDate, …) | Case resolved by short case number + optional court. (Paid.) |
+| 4 | **Case by case number** | `shortCaseNumber`, optional `court_id` or `court_state` | One case with standard fields | **FREE (no key):** 7-digit case number (e.g. 26-12664) returns limited info + $5 upsell. Otherwise: use when same number exists in multiple courts. |
 | 5 | **Cases by NAICS** | `naics` (2–4 digits), `limit`, optional `start_date`, `end_date` | List of cases with standard fields | NAICS must be 2–4 digits; more than 4 is rejected. |
 | 6 | **Cases by state** | `state` (2-letter), `limit`, optional `start_date`, `end_date` | List of cases with standard fields | Optional date range on dateFiled. |
 | 7 | **Case status / dates** | — | Returned as part of case data | dateFiled, dateClosed, dateDismissed; isOpen / isClosed / isDismissed. |
