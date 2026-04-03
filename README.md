@@ -49,6 +49,50 @@ Billable tool calls correspond to data tools invoked via MCP (for example, searc
 
 ---
 
+## Connecting via OpenAI
+
+Use OpenAI's [Responses API](https://platform.openai.com/docs/guides/tools-remote-mcp) to call this MCP server directly.
+
+**Free tier (no token):**
+
+```python
+from openai import OpenAI
+
+client = OpenAI()
+
+response = client.responses.create(
+    model="gpt-4.1",
+    tools=[{
+        "type": "mcp",
+        "server_label": "bankruptcy_observer",
+        "server_url": "https://mcp.bankruptcyobserver.com/mcp",
+        "require_approval": "never",
+    }],
+    input="Search for bankruptcy cases for Acme Corp",
+)
+print(response.output_text)
+```
+
+**Paid tier (with token):**
+
+```python
+response = client.responses.create(
+    model="gpt-4.1",
+    tools=[{
+        "type": "mcp",
+        "server_label": "bankruptcy_observer",
+        "server_url": "https://mcp.bankruptcyobserver.com/mcp",
+        "headers": {"Authorization": "Bearer YOUR_TOKEN"},
+        "require_approval": "never",
+    }],
+    input="Get docket entries for case 24-10543",
+)
+```
+
+> **Note:** Do not set `Content-Type` or `Accept` headers manually — the OpenAI client sets these correctly for the MCP protocol. Overriding them will cause the server to return an HTML error page instead of a JSON response.
+
+---
+
 ## Endpoints
 
 | Service | Endpoint | Auth |
