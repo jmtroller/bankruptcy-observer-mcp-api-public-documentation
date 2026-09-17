@@ -4,11 +4,9 @@ Public documentation and registry metadata for the **Bankruptcy Observer MCP ser
 
 The former REST host `api.bankruptcyobserver.com` redirects to the MCP docs. Programmatic access is the MCP server at `https://mcp.bankruptcyobserver.com/mcp`.
 
-## What this is
+## What this server does, how it works, and who it's for
 
-- **Bankruptcy MCP server** — US business bankruptcy filings, dockets, court documents, case summaries, and monitoring via the [Model Context Protocol](https://modelcontextprotocol.io/) for AI assistants and LLM workflows.
-
-Data covers **US business bankruptcies** (federal courts) only. Consumer-only filings and non-US jurisdictions are not included.
+Bankruptcy Observer's MCP server gives AI assistants — Claude, ChatGPT, Cursor, or any MCP client — live access to United States business bankruptcy filings (chapters 7, 11, 12, and 15) so the agent can look up a debtor, read the full docket, pull court documents, summarize the case in plain English, and report what changed. Connect over HTTPS at `https://mcp.bankruptcyobserver.com/mcp` (Model Context Protocol, Streamable HTTP); the agent calls tools against PACER-sourced data we have tracked since 2005 and refresh from every bankruptcy court hourly. Name and 7-digit case-number lookups work with no account; full dockets, documents, and search require a subscription ([pricing](https://www.bankruptcyobserver.com/pricing)). It is for creditors, credit and risk teams, counsel, and anyone who needs answers about a US business bankruptcy case without clicking through PACER. Consumer-only filings and non-US jurisdictions are not included.
 
 **Live docs (canonical):** [https://mcp.bankruptcyobserver.com/docs](https://mcp.bankruptcyobserver.com/docs)
 
