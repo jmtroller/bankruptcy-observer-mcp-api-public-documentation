@@ -1,13 +1,16 @@
-# Bankruptcy Observer — API & MCP
+# Bankruptcy Observer — MCP
 
-Public documentation and registry metadata for the **Bankruptcy Observer API** and **MCP server**. This repository contains no application source code.
+Public documentation and registry metadata for the **Bankruptcy Observer MCP server**. This repository contains no application source code.
+
+The former REST host `api.bankruptcyobserver.com` redirects to the MCP docs. Programmatic access is the MCP server at `https://mcp.bankruptcyobserver.com/mcp`.
 
 ## What this is
 
-- **Bankruptcy REST API** — Programmatic access to US business bankruptcy data (search, case by EIN, docket items, cases by NAICS/state, and more).
-- **Bankruptcy MCP server** — The same data and queries via the [Model Context Protocol](https://modelcontextprotocol.io/) for AI assistants and LLM workflows.
+- **Bankruptcy MCP server** — US business bankruptcy filings, dockets, court documents, case summaries, and monitoring via the [Model Context Protocol](https://modelcontextprotocol.io/) for AI assistants and LLM workflows.
 
 Data covers **US business bankruptcies** (federal courts) only. Consumer-only filings and non-US jurisdictions are not included.
+
+**Live docs (canonical):** [https://mcp.bankruptcyobserver.com/docs](https://mcp.bankruptcyobserver.com/docs)
 
 ---
 
@@ -20,32 +23,48 @@ AI assistants and users can look up bankruptcy cases with **no account, no API k
 | **Debtor name** | `search_bankruptcy_cases_tool` | `search_term: "JOY-CPW, INC."` — no court required |
 | **Case number** | `get_case_by_case_number_tool` | `short_case_number: "26-10543"` — no court required |
 
-- Call these tools **without an API token**. Only case number or name is needed; **court is not required**. If more than one case matches (e.g. same case number in multiple courts), the server returns **all** matching cases. Each result includes limited case info; full case details are available with a paid plan.
-- All other queries (wildcard search, EIN, industry, state, date range, docket, etc.) require a subscription and authentication with either an API token or an OAuth Bearer access token.
+- Call these tools **without an API token**. Only case number or name is needed; **court is not required**. If more than one case matches (e.g. same case number in multiple courts), the server returns **all** matching cases. Each result includes limited case info; full case details, dockets, documents, and broad search require a paid plan.
+- Wildcard name search (`*term`), EIN, industry, NAICS, state, date range, docket, documents, summaries, and monitoring require a subscription (or an Ala Carte request) and authentication.
 
-**Docs:** [https://mcp.bankruptcyobserver.com/docs](https://mcp.bankruptcyobserver.com/docs) or [https://api.bankruptcyobserver.com/docs](https://api.bankruptcyobserver.com/docs) (GET, no auth). The MCP root `GET https://mcp.bankruptcyobserver.com/` also returns a `free_lookups` hint.
+Account tools `list_plans_tool` and `purchase_plan_tool` also work with no auth.
 
 ---
 
 ## Sign-up and access
 
-You can **sign up for a subscription through the MCP server**: use `list_plans_tool` to see plans, then `purchase_plan_tool` with `plan_id` (e.g. `professional`, `business`, `enterprise`) to get a Stripe Checkout link. After payment you receive an API token; restricted queries can be authenticated with that token or with OAuth Bearer access tokens from the MCP OAuth flow. No need to go to the website to subscribe.
+Website subscribers at [bankruptcyobserver.com](https://www.bankruptcyobserver.com) get MCP access included. After payment, the token is in the subscriber dashboard at [https://www.bankruptcyobserver.com/subscriber/mcp-setup](https://www.bankruptcyobserver.com/subscriber/mcp-setup). **No token is emailed.**
 
-For questions about access, billing, or data coverage, use **only** the contact form at https://www.bankruptcyobserver.com/contact. Do not publish or use direct email addresses for contact.
+You can also **subscribe through the MCP server**: call `list_plans_tool` for the live catalog, then `purchase_plan_tool` with that numeric `plan_id` (or its Stripe price id) to get a Stripe Checkout link. Browser alternative: [https://mcp.bankruptcyobserver.com/subscribe](https://mcp.bankruptcyobserver.com/subscribe) or [https://www.bankruptcyobserver.com/pricing](https://www.bankruptcyobserver.com/pricing).
 
-**Paid plans (Stripe via MCP tools)**
+`plan_id` is the numeric id from `list_plans_tool` (for example `57`, `60`, `58`, `62`) or the `stripe_price_id`. There are no plans named Professional, Business, or Enterprise for MCP checkout.
 
-- **Professional** — $1,500/month, up to **500** billable tool calls/month.
-- **Business** — $3,500/month, up to **10,000** billable tool calls/month.
-- **Enterprise** — $5,000/month, up to **150,000** billable tool calls/month (intended for multiple clients/teams).
+For questions about access, billing, data coverage, or custom enterprise feeds, use **only** the contact form at [https://www.bankruptcyobserver.com/contact](https://www.bankruptcyobserver.com/contact). Do not publish or use direct email addresses for contact.
 
-Billable tool calls correspond to data tools invoked via MCP (for example, search, case by EIN, docket items, NAICS/state filters) or their REST API equivalents.
+### Current plans
+
+Prices, plan ids, and Stripe price ids come from `list_plans_tool` (always current). Snapshot of the live catalog:
+
+| Plan | Billing | MCP access |
+|------|---------|------------|
+| **Ala Carte Request** (`plan_id` `62`) | $5 one-time | One full-data request of any tool. Purchased requests never expire. Document downloads are extra. |
+| **Full Access Light** (`plan_id` `57`) | $39 / month | Full search across US business filings, docket/documents/summaries/monitoring. 5 monitored cases. 100 agent questions / month. |
+| **Full Access Standard** (`plan_id` `60`) | $49 / month (7-day free trial) | Same tools. 20 monitored cases. 300 agent questions / month. |
+| **Full Access Heavy** (`plan_id` `58`) | $109 / month (7-day free trial) | Same tools. 50 monitored cases. 1,000 agent questions / month. |
+
+Full Access plans include library PDFs at no charge; documents not yet in the library are 10¢/page (shown before download).
+
+**Single Case** ($29 / month) is sold from a case page on the website, not from `list_plans_tool`. It includes docket, document, summary, and monitoring tools **only for cases on your monitoring list**. Broad search (wildcard name, EIN, industry, NAICS, state, date range) is Full Access.
+
+**Enterprise** is a custom feed (EIN/address matching into your systems or agents), not a Stripe `plan_id`. Use the [contact form](https://www.bankruptcyobserver.com/contact) or [enterprise page](https://www.bankruptcyobserver.com/enterprise).
+
+`check_subscription_tool` returns remaining quota for an authenticated token.
 
 **Authenticate using either an API token or an OAuth access token, sent in one of these ways:**
 
 - `Authorization: Bearer <your-token>`
 - `X-API-Key: <your-token>`
 - `Api-Key: <your-token>`
+- Header-less clients (e.g. Grok web connectors): `https://mcp.bankruptcyobserver.com/mcp?api_key=YOUR_TOKEN` or `/mcp/t/YOUR_TOKEN`. Treat the full URL as a secret.
 
 ---
 
@@ -103,11 +122,13 @@ If the **Registration URL** is omitted, Dynamic Client Registration will fail an
 
 **OAuth endpoints**
 
-- **Auth URL:** `https://mcp.bankruptcyobserver.com/authorize`
-- **Token URL:** `https://mcp.bankruptcyobserver.com/token`
-- **Registration URL:** `https://mcp.bankruptcyobserver.com/register`
+- **Auth URL:** `https://mcp.bankruptcyobserver.com/oauth/authorize`
+- **Token URL:** `https://mcp.bankruptcyobserver.com/oauth/token`
+- **Registration URL:** `https://mcp.bankruptcyobserver.com/oauth/register`
 - **Authorization server base:** `https://mcp.bankruptcyobserver.com/`
 - **Resource:** `https://mcp.bankruptcyobserver.com/mcp`
+
+Paths `/authorize`, `/token`, and `/register` (without `/oauth`) are not valid.
 
 After connecting, ChatGPT should complete OAuth in-browser and then call tools using OAuth Bearer tokens. Legacy API-token headers remain supported for clients that use header auth.
 
@@ -117,37 +138,61 @@ After connecting, ChatGPT should complete OAuth in-browser and then call tools u
 
 | Service | Endpoint | Auth |
 |--------|----------|------|
-| REST API | `https://api.bankruptcyobserver.com/api/v1/...` | Free lookups: no auth. Restricted queries: API token or OAuth Bearer token |
-| MCP      | `https://mcp.bankruptcyobserver.com/mcp`        | Free lookups: no auth. Restricted queries: API token or OAuth Bearer token |
-| Docs     | `https://api.bankruptcyobserver.com/docs` or `https://mcp.bankruptcyobserver.com/docs` | None |
+| MCP | `https://mcp.bankruptcyobserver.com/mcp` | Free lookups: no auth. Restricted queries: API token or OAuth Bearer token |
+| Docs | `https://mcp.bankruptcyobserver.com/docs` | None |
+| Subscribe | `https://mcp.bankruptcyobserver.com/subscribe` or [bankruptcyobserver.com/pricing](https://www.bankruptcyobserver.com/pricing) | None |
+| Website MCP overview | [https://www.bankruptcyobserver.com/mcp](https://www.bankruptcyobserver.com/mcp) | None |
 
-The `/mcp` path is the MCP protocol endpoint (POST only). For human-readable documentation, use the **Docs** URLs above (GET, no auth).
+The `/mcp` path is the MCP protocol endpoint (POST). For human-readable documentation, use the Docs URL (GET, no auth).
 
 ---
 
-## Available queries and responses
+## Tools
 
-The same queries are available on both the REST API and the MCP server. Each query returns JSON; case-level responses include the standard fields below unless noted.
+Anonymous `tools/list` includes the full catalog. Paid tools return a payment/upgrade payload until you authenticate.
 
-### Query list
+### Free / account
 
-| # | Query | Inputs | What you get | Notes |
-|---|-------|--------|--------------|--------|
-| 1 | **Search** | `search_term`, `limit`, `skip`, optional `court_id` or `court_state` | List of cases with standard fields | **FREE (no key):** exact name returns limited info; full details are available with a paid plan. Otherwise: prefix (starts-with) on name; use `*term` for contains. For case number use Case by case number. |
-| 2 | **Case by EIN** | `ein` | One case (or none) **+** `einInDatabase`: `"Yes"` or `"No"` | Single match; flag says whether we have this EIN. (Restricted: API token or OAuth Bearer token.) |
-| 3 | **Docket items** | `shortCaseNumber`, optional `court_id` or `court_state`, `limit` | Case identifier, `dateDocketUpdated`, list of entries (itemNumber, itemText, itemDate, …) | Case resolved by short case number + optional court. (Restricted: API token or OAuth Bearer token.) |
-| 4 | **Case by case number** | `shortCaseNumber`; optional `court_state` or `court_id` for paid disambiguation | List (free) or one case (paid) | **FREE (no key):** case number only, no court required; returns **all** matching cases. For paid requests, you may provide `court_state`/`court_id` to select a specific case when multiple courts match. |
-| 5 | **Cases by NAICS** | `naics` (2–4 digits), `limit`, optional `start_date`, `end_date` | List of cases with standard fields | NAICS must be 2–4 digits; more than 4 is rejected. |
-| 6 | **Cases by state** | `state` (2-letter), `limit`, optional `start_date`, `end_date` | List of cases with standard fields | Optional date range on dateFiled. |
-| 7 | **Case status / dates** | — | Returned as part of case data | dateFiled, dateClosed, dateDismissed; isOpen / isClosed / isDismissed. |
+| Tool | Notes |
+|------|--------|
+| `search_bankruptcy_cases_tool` | **Free:** exact/prefix name, limited fields. **Paid:** `*term` contains search and full fields. |
+| `get_case_by_case_number_tool` | **Free:** 7-digit number, all matching courts, limited fields. **Paid:** full data, court filters, `live_update`. |
+| `list_plans_tool` | Live plan catalog. No auth. |
+| `purchase_plan_tool` | Stripe Checkout URL. Pass `plan_id` from `list_plans_tool`. No auth. |
+| `check_subscription_tool` | Status and remaining quota. |
 
-**Pagination:** List responses support `limit` and `skip` where applicable; responses include `total` or similar where useful.
+### Full Access search
 
-**Date range:** For NAICS and state queries, optional `start_date` and `end_date` filter on `dateFiled`. Search does not support date filters.
+| Tool | Notes |
+|------|--------|
+| `get_case_by_ein_tool` | Debtor EIN. |
+| `get_cases_by_industry_tool` | Industry label or key; optional date range. |
+| `get_cases_by_naics_tool` | NAICS 2–4 digits; optional date range. |
+| `get_cases_by_state_tool` | Two-letter state; optional date range. |
+| `get_cases_by_date_range_tool` | Filed-date range (`dateFiled`). |
 
-### Standard fields (case-level)
+Ala Carte can call these tools using a purchased request. Single Case cannot (scoped to monitored cases).
 
-Returned for any query that returns case rows:
+### Case intelligence and documents (subscribers)
+
+| Tool | Notes |
+|------|--------|
+| `get_docket_entries_tool` | Docket entries (`limit` max 50; `skip` / `offset` / `page` for the rest). Each entry includes `docket_id`. |
+| `get_case_summary_tool` | Plain-English structured summary. |
+| `get_document_tool` | Call with `docket_id` only for cost preview; `accept_charge: true` after the user confirms to get a signed PDF URL. |
+| `get_document_cost_tool` | Optional same cost preview. |
+| `list_monitored_cases_tool` | Cases on your monitoring list. |
+| `add_monitored_case_tool` | Add a case to monitoring. |
+| `refresh_docket_tool` | Immediate docket refresh from court sources. |
+| `get_recent_developments_tool` | Docket activity since a date (default last 7 days). |
+
+Document flow: `get_docket_entries_tool` → `get_document_tool` with `docket_id` only (cost) → user confirms → `get_document_tool` with `accept_charge: true`.
+
+---
+
+## Standard fields (case-level)
+
+Returned for queries that return case rows (full fields on paid requests):
 
 | Field | Description |
 |-------|-------------|
@@ -159,54 +204,26 @@ Returned for any query that returns case rows:
 
 **Optional** (included when relevant): `courtState`, `chapter`, `NAICS`, `industry`, `dateClosed`, `dateDismissed`, `isOpen` / `isClosed` / `isDismissed`, `assetAmount`, `liabAmount`.
 
-### EIN query: `einInDatabase`
-
-For **Case by EIN** the response always includes:
-
-- **`einInDatabase`** — `"Yes"` if we have at least one case with this EIN (and the case payload); `"No"` if we have no case with this EIN (case payload null or omitted).
-
-### Docket response shape
-
-For **Docket items** you get:
-
-- Case identifier (e.g. shortCaseNumber, court).
-- **dateDocketUpdated** — when this case’s docket was last updated in our system.
-- **entries** — array of objects with at least `itemNumber`, `itemText`, `itemDate` (and optionally pageCount, pacerDocId).
-
----
-
-## API vs MCP mapping
-
-| Query | REST API (POST) | MCP tool |
-|-------|------------------|----------|
-| Search | `/api/v1/search` | `search_bankruptcy_cases_tool` |
-| Case by EIN | `/api/v1/case/ein` | `get_case_by_ein_tool` |
-| Docket items | `/api/v1/docket` | `get_docket_entries_tool` |
-| Case by case number | `/api/v1/case/by-number` | `get_case_by_case_number_tool` |
-| Cases by NAICS | `/api/v1/cases/by-naics` | `get_cases_by_naics_tool` |
-| Cases by state | `/api/v1/cases/by-state` | `get_cases_by_state_tool` |
-
-Same backend for both; response shape is identical.
+Free lookups return a limited subset (name, chapter, court, case number, filing date, and similar).
 
 ---
 
 ## Full documentation (canonical)
 
-The full spec (same content as above, plus any updates) is also served with no auth at:
+The live spec is served with no auth at:
 
-- **API docs:** [https://api.bankruptcyobserver.com/docs](https://api.bankruptcyobserver.com/docs)
 - **MCP docs:** [https://mcp.bankruptcyobserver.com/docs](https://mcp.bankruptcyobserver.com/docs)
-
-Both URLs return the same Markdown. Use them for the latest version or for AI/bot discovery.
+- **Website MCP overview:** [https://www.bankruptcyobserver.com/mcp](https://www.bankruptcyobserver.com/mcp)
+- **Pricing:** [https://www.bankruptcyobserver.com/pricing](https://www.bankruptcyobserver.com/pricing)
 
 ---
 
 ## Registry
 
-This repo includes a `server.json` for the [Official MCP Registry](https://modelcontextprotocol.io/registry/about). It describes the remote MCP server and how to connect (URL + API token header). Use it when publishing to the registry via the Registry CLI; the registry points to this GitHub repo for metadata only.
+This repo includes a `server.json` describing the remote MCP server (URL + optional API token header). The listing in the [Official MCP Registry](https://modelcontextprotocol.io/registry/about) may also point at the consolidated docs repo [`jmtroller/mcp-documentation`](https://github.com/jmtroller/mcp-documentation/tree/main/bankruptcy-observer). Search: `https://registry.modelcontextprotocol.io/v0.1/servers?search=com.bankruptcyobserver`
 
 ---
 
 ## License
 
-Documentation and metadata in this repository are provided for discovery and integration. The Bankruptcy Observer product, API, and MCP service are offered under separate terms; see the product website.
+Documentation and metadata in this repository are provided for discovery and integration. The Bankruptcy Observer product and MCP service are offered under separate terms; see the product website.

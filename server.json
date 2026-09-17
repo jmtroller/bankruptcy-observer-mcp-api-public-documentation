@@ -2,8 +2,9 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.bankruptcyobserver/mcp",
   "title": "Bankruptcy Observer",
-  "description": "US business bankruptcy data via MCP: search, EIN lookup, docket items, NAICS/state. Same as Bankruptcy Observer REST API. Contact: https://www.bankruptcyobserver.com/contact.",
-  "version": "1.0.0",
+  "description": "US business bankruptcy MCP: filings, dockets, documents, case summaries. Free name/case-number lookups; Full Access Light/Standard/Heavy subscriptions and Ala Carte via list_plans_tool. Contact: https://www.bankruptcyobserver.com/contact.",
+  "version": "1.2.1",
+  "websiteUrl": "https://mcp.bankruptcyobserver.com/docs",
   "repository": {
     "url": "https://github.com/jmtroller/bankruptcy-observer-mcp-api-public-documentation",
     "source": "github"
@@ -15,7 +16,7 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "API token (Bearer). Obtain via this server: list_plans_tool then purchase_plan_tool to get Stripe Checkout; after payment you receive a token. Or at bankruptcyobserver.com.",
+          "description": "Bearer MCP API token for subscriber tools. Optional for free-tier name and case-number lookups. Obtain via list_plans_tool then purchase_plan_tool (token appears in the bankruptcyobserver.com subscriber dashboard; it is not emailed). X-API-Key also supported.",
           "isRequired": false,
           "isSecret": true
         }
