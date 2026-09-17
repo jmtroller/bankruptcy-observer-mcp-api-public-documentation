@@ -24,7 +24,7 @@ AI assistants and users can look up bankruptcy cases with **no account, no API k
 | **Case number** | `get_case_by_case_number_tool` | `short_case_number: "26-10543"` — no court required |
 
 - Call these tools **without an API token**. Only case number or name is needed; **court is not required**. If more than one case matches (e.g. same case number in multiple courts), the server returns **all** matching cases. Each result includes limited case info; full case details, dockets, documents, and broad search require a paid plan.
-- Wildcard name search (`*term`), EIN, industry, NAICS, state, date range, docket, documents, summaries, and monitoring require a subscription (or an Ala Carte request) and authentication.
+- Wildcard name search (`*term`), EIN, industry, NAICS, state, date range, docket, documents, summaries, and monitoring require a subscription and authentication.
 
 Account tools `list_plans_tool` and `purchase_plan_tool` also work with no auth.
 
@@ -32,30 +32,13 @@ Account tools `list_plans_tool` and `purchase_plan_tool` also work with no auth.
 
 ## Sign-up and access
 
-Website subscribers at [bankruptcyobserver.com](https://www.bankruptcyobserver.com) get MCP access included. After payment, the token is in the subscriber dashboard at [https://www.bankruptcyobserver.com/subscriber/mcp-setup](https://www.bankruptcyobserver.com/subscriber/mcp-setup). **No token is emailed.**
+Current plans and prices: **[bankruptcyobserver.com/pricing](https://www.bankruptcyobserver.com/pricing)**.
 
-You can also **subscribe through the MCP server**: call `list_plans_tool` for the live catalog, then `purchase_plan_tool` with that numeric `plan_id` (or its Stripe price id) to get a Stripe Checkout link. Browser alternative: [https://mcp.bankruptcyobserver.com/subscribe](https://mcp.bankruptcyobserver.com/subscribe) or [https://www.bankruptcyobserver.com/pricing](https://www.bankruptcyobserver.com/pricing).
+Website subscribers get MCP access included. After payment, the token is in the subscriber dashboard at [https://www.bankruptcyobserver.com/subscriber/mcp-setup](https://www.bankruptcyobserver.com/subscriber/mcp-setup). **No token is emailed.**
 
-`plan_id` is the numeric id from `list_plans_tool` (for example `57`, `60`, `58`, `62`) or the `stripe_price_id`. There are no plans named Professional, Business, or Enterprise for MCP checkout.
+You can also subscribe through the MCP server: call `list_plans_tool`, then `purchase_plan_tool` with a `plan_id` from that list (or its Stripe price id) to get a Stripe Checkout link. Browser alternative: [https://mcp.bankruptcyobserver.com/subscribe](https://mcp.bankruptcyobserver.com/subscribe).
 
-For questions about access, billing, data coverage, or custom enterprise feeds, use **only** the contact form at [https://www.bankruptcyobserver.com/contact](https://www.bankruptcyobserver.com/contact). Do not publish or use direct email addresses for contact.
-
-### Current plans
-
-Prices, plan ids, and Stripe price ids come from `list_plans_tool` (always current). Snapshot of the live catalog:
-
-| Plan | Billing | MCP access |
-|------|---------|------------|
-| **Ala Carte Request** (`plan_id` `62`) | $5 one-time | One full-data request of any tool. Purchased requests never expire. Document downloads are extra. |
-| **Full Access Light** (`plan_id` `57`) | $39 / month | Full search across US business filings, docket/documents/summaries/monitoring. 5 monitored cases. 100 agent questions / month. |
-| **Full Access Standard** (`plan_id` `60`) | $49 / month (7-day free trial) | Same tools. 20 monitored cases. 300 agent questions / month. |
-| **Full Access Heavy** (`plan_id` `58`) | $109 / month (7-day free trial) | Same tools. 50 monitored cases. 1,000 agent questions / month. |
-
-Full Access plans include library PDFs at no charge; documents not yet in the library are 10¢/page (shown before download).
-
-**Single Case** ($29 / month) is sold from a case page on the website, not from `list_plans_tool`. It includes docket, document, summary, and monitoring tools **only for cases on your monitoring list**. Broad search (wildcard name, EIN, industry, NAICS, state, date range) is Full Access.
-
-**Enterprise** is a custom feed (EIN/address matching into your systems or agents), not a Stripe `plan_id`. Use the [contact form](https://www.bankruptcyobserver.com/contact) or [enterprise page](https://www.bankruptcyobserver.com/enterprise).
+For questions about access, billing, or data coverage, use **only** the contact form at [https://www.bankruptcyobserver.com/contact](https://www.bankruptcyobserver.com/contact). Do not publish or use direct email addresses for contact.
 
 `check_subscription_tool` returns remaining quota for an authenticated token.
 
@@ -161,7 +144,7 @@ Anonymous `tools/list` includes the full catalog. Paid tools return a payment/up
 | `purchase_plan_tool` | Stripe Checkout URL. Pass `plan_id` from `list_plans_tool`. No auth. |
 | `check_subscription_tool` | Status and remaining quota. |
 
-### Full Access search
+### Paid search
 
 | Tool | Notes |
 |------|--------|
@@ -171,7 +154,7 @@ Anonymous `tools/list` includes the full catalog. Paid tools return a payment/up
 | `get_cases_by_state_tool` | Two-letter state; optional date range. |
 | `get_cases_by_date_range_tool` | Filed-date range (`dateFiled`). |
 
-Ala Carte can call these tools using a purchased request. Single Case cannot (scoped to monitored cases).
+Which paid tools you can call depends on your plan. See [pricing](https://www.bankruptcyobserver.com/pricing).
 
 ### Case intelligence and documents (subscribers)
 
