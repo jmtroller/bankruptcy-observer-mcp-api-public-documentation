@@ -158,7 +158,7 @@ Which paid tools you can call depends on your plan. See [pricing](https://www.ba
 
 | Tool | Notes |
 |------|--------|
-| `get_docket_entries_tool` | Docket entries (`limit` max 50; `skip` / `offset` / `page` for the rest). Each entry includes `docket_id`. |
+| `get_docket_entries_tool` | Docket entries ordered by item number. Each entry includes the full PACER `itemText` (never sliced) and `docket_id`. Optional `docket_id`, `item_number`, or `item_from`/`item_to`. `limit` max 50 (default 25); use `skip`, `offset`, or 1-based `page`. A page may return fewer than `limit` so the caption is not cut. Response includes `total`, `skip`, `limit`, `returned`, and `has_more`. |
 | `get_case_summary_tool` | Plain-English structured summary. |
 | `get_document_tool` | Call with `docket_id` only for cost preview; `accept_charge: true` after the user confirms to get a signed PDF URL. |
 | `get_document_cost_tool` | Optional same cost preview. |
